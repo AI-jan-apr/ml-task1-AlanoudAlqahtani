@@ -1,112 +1,143 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/3TS0mELD)
-# Machine Learning Task 1
-## Breast Cancer — Binary Classification
+# Breast Cancer Classification – Model Comparison
+
+## Project Overview
+
+This project evaluates multiple classification models on the Breast Cancer Wisconsin Dataset from `sklearn`. The objective is to compare model performance in a medical diagnosis context and determine which model is most suitable for detecting malignant tumors.
 
 ---
 
-## Objective
+## 1. Train-Test Split
 
-In this task, you will build and compare multiple **binary classification** models to predict whether a tumor is:
+The dataset was split using the following configuration:
 
-- **0 — Malignant (Cancerous)**
-- **1 — Benign (Non-cancerous)**
+- test_size = 0.2  
+- random_state = 42  
+- stratify = y  
 
-You must use the following models covered in class:
-
-- Logistic Regression
-- Support Vector Machine (SVM)
-- K-Nearest Neighbors (KNN)
-
-The focus of this task is **model training, evaluation, and comparison**.
-
-⚠️ Feature scaling is NOT allowed in this task.
+Stratification ensures the class distribution (benign vs malignant) remains balanced in both training and test sets.
 
 ---
 
-## Dataset
+## 2. Models Trained
 
-We will use the **Breast Cancer Wisconsin Dataset**, available directly in `scikit-learn`.
+The following models were trained using default parameters unless otherwise justified:
 
-### Dataset Overview
+- Logistic Regression  
+- Support Vector Machine (Linear Kernel)  
+- K-Nearest Neighbors (KNN)  
 
-- 569 samples
-- 30 numerical features
-- Binary target variable
-- No missing values
+For KNN, cross-validation was used to select an optimal value of K:
 
-Each feature represents a measurement extracted from a digitized image of a breast mass (e.g., radius, texture, area, smoothness, concavity, symmetry, etc.).
-
----
-
-## Dataset Loading
-
-Use the following code to load the dataset:
-
-```python
-from sklearn.datasets import load_breast_cancer
-
-data = load_breast_cancer()
-X = data.data
-y = data.target
-```
+- n_neighbors = 12  
 
 ---
 
-## Required Tasks
+## 3. Model Evaluation Metrics
 
-### 1. Train-Test Split
+Each model was evaluated using:
 
-Split the dataset using:
-
-- `test_size = 0.2`
-- `random_state = 42`
-- `stratify = y`
-
-### 2. Model Training
-
-Train the following models:
-
-- Logistic Regression
-- SVM
-- KNN
-
-Use default parameters unless clearly justified.
-
-### 3. Model Evaluation
-
-For each model, compute:
-
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- Confusion Matrix
-
-### 4. Model Comparison
-
-Create a comparison table summarizing the evaluation metrics for all models.
-
-Then write a short conclusion answering:
-
-- Which model performed best?
-- In a medical context, which metric is most important and why?
+- Accuracy  
+- Precision  
+- Recall  
+- F1-score  
+- Confusion Matrix  
+- ROC-AUC  
 
 ---
 
-## Project Structure
+## 4. Model Comparison Results
 
-Your project must follow this structure:
+### Comparison Table (Best by Recall)
 
-```
-breast-cancer-binary-classification/
-├── modeling.ipynb
-└── README.md
-```
+| Model               | Accuracy | Precision | Recall | F1-score |
+|--------------------|----------|-----------|--------|----------|
+| Logistic Regression | 0.9561   | 0.9467    | 0.9861 | 0.9660   |
+| SVM (Linear Kernel) | 0.9561   | 0.9467    | 0.9861 | 0.9660   |
+| KNN (k=12)          | 0.9386   | 0.9452    | 0.9583 | 0.9517   |
 
 ---
 
-## Submission Requirements
+## 5. Additional Analysis
 
-- Clean and organized notebook
-- Clear metric comparison
-- Written conclusion
+Although Logistic Regression and SVM produced identical classification metrics, their predicted probabilities were not identical.
+
+Average absolute difference between predicted probabilities:
+
+0.0340
+
+This confirms that while their predicted labels were similar, the underlying confidence levels differ slightly.
+
+Additionally, Logistic Regression achieved:
+
+ROC-AUC ≈ 0.996
+
+This indicates near-perfect class separability.
+
+---
+
+## 6. Conclusion
+
+### Which model performed best?
+
+Both Logistic Regression and SVM (Linear Kernel) achieved identical performance across all classification metrics:
+
+- Highest Recall (0.9861)  
+- Highest F1-score (0.9660)  
+- Highest Accuracy (0.9561)  
+
+However, Logistic Regression is selected as the preferred model due to:
+
+- Simplicity and interpretability  
+- Comparable performance to SVM  
+- Strong ROC-AUC score (~0.996)  
+- Lower computational complexity  
+
+---
+
+### In a medical context, which metric is most important and why?
+
+In medical diagnosis, Recall (Sensitivity) is the most critical metric.
+
+Recall measures:
+
+Recall = TP / (TP + FN)
+
+It answers the question:
+
+"Out of all actual cancer cases, how many did the model correctly detect?"
+
+A False Negative (missing a real cancer case) is significantly more dangerous than a False Positive (incorrectly flagging a healthy patient).
+
+False negatives can lead to:
+
+- Delayed treatment  
+- Disease progression  
+- Increased mortality risk  
+
+Therefore, maximizing Recall is prioritized over Precision or Accuracy in cancer detection tasks.
+
+---
+
+## Final Recommendation
+
+Logistic Regression is recommended for this task due to:
+
+- Highest Recall  
+- Excellent ROC-AUC  
+- Strong F1-score  
+- Simplicity and interpretability  
+- Comparable performance to SVM  
+
+The dataset appears highly linearly separable, allowing linear models to perform exceptionally well.
+
+---
+
+## Notes
+
+While performance is extremely high on this dataset, further validation using:
+
+- Cross-validation  
+- External datasets  
+- Threshold tuning  
+
+would be necessary before real-world deployment in a clinical setting.
